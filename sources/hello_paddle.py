@@ -36,3 +36,7 @@ for i in range(total_epoch):
         print(i,loss.numpy())
 
 print("finish training,loss ={} ".format(loss.numpy()))
+
+w_after_opt = linear.weight.numpy().item()
+b_after_opt = linear.bias.numpy().item()
+print(w_after_opt,b_after_opt)
