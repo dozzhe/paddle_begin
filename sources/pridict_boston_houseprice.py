@@ -3,22 +3,18 @@ import paddle
 from paddle.nn import Linear
 import numpy as np
 import paddle.nn.functional as F
-import pandas as pd
 
 def load_data():
-    datafile = './housing-price.csv'
+    datafile = '../data/house_price'
 
     #每条数据包括14项，其中前面13项是影响因素，第14项是相应的房层价格中位数
     feature_names = ['CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 'AGE', 'DIS',
              'RAD', 'TAX', 'PTRATIO', 'B', 'LSTAT', 'MEDV']
     feature_num = len(feature_names)
 
-    data = pd.read_csv(datafile, names=feature_names, delim_whitespace=True)
-    # data.head(10)
-
-    # data = np.fromfile(datafile,sep=' ',dtype=np.float32)
+    data = np.fromfile(datafile,sep=' ',dtype=np.float32)
     # 将原始数据进行Reshape，变成[N，14]这样的形状
-    # data = data.reshape([data.shape[0] // feature_num, feature_num])
+    data = data.reshape([data.shape[0] // feature_num, feature_num])
 
     # 将原数据集拆分成训练集和测试集
     # 这里使用80%的数据缴洲练，20%的数据测试
@@ -35,8 +31,8 @@ def load_data():
     global max_values
     global min_values
     global avg_values
-    max_valves = maximums
-    min_valves = minimums
+    max_values = maximums
+    min_values = minimums
     avg_values = avgs
 
     # 对数据进行归一化处理
@@ -97,8 +93,8 @@ for epoch_id in range(EPOCH_NUM):
         # 计算损失
         loss =F.square_error_cost(predicts,label=prices)
         avg_loss =paddle.mean(loss)
-        if iter_id%20 == 0:
-            print("epoch: {},iter: {},loss is: {}",format(epoch_id, iter_id, avg_loss.numpy()))
+        if iter_id % 20 == 0:
+            print("epoch: {},iter: {},loss is: {}".format(epoch_id, iter_id, avg_loss.numpy()))
 
         # 反间传播
         avg_loss.backward()
@@ -109,7 +105,7 @@ for epoch_id in range(EPOCH_NUM):
 
 
 # 保存模型参数，文件名为LR_model.pdparams
-paddle.save(model.state_dict(),'LR_model.pdparams')
+paddle.save(model.state_dict(),'../model/LR_model.pdparams')
 print("模型保存成功，模型参数保存在LR_model.pdparams中")
 
 
@@ -124,7 +120,7 @@ def load_one_example():
 
 
 #参数为保存模型参数的文件地址
-model_dict=paddle.load('LR_model.pdparams')
+model_dict=paddle.load('../model/LR_model.pdparams')
 model.load_dict(model_dict)
 model.eval()
 
